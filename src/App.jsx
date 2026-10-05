@@ -1,11 +1,16 @@
+
+import { useState } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Overview from "./components/Overview";
 import ProgressCard from "./components/ProgressCard";
 import TasksSection from "./components/TasksSection";
+import AddTaskModal from "./components/AddTaskModal";
 
 function App() {
-  const tasks = [
+  const [showModal, setShowModal] = useState(false);
+
+  const [tasks, setTasks] = useState([
     {
       id: 1,
       title: "Finish React Todo App",
@@ -46,14 +51,31 @@ function App() {
       date: "Oct 8",
       completed: true,
     },
-  ];
+  ]);
+
+  function handleOpenModal() {
+    setShowModal(true);
+  }
+
+  function handleCloseModal() {
+    setShowModal(false);
+  }
+
+  function handleAddTask(newTask) {
+    setTasks((currentTasks) => [
+      ...currentTasks,
+      newTask,
+    ]);
+
+    setShowModal(false);
+  }
 
   return (
     <div className="app">
       <Header />
 
       <main className="main-content">
-        <Hero />
+        <Hero onAddTask={handleOpenModal} />
 
         <Overview />
 
@@ -61,6 +83,13 @@ function App() {
 
         <TasksSection tasks={tasks} />
       </main>
+
+      {showModal && (
+        <AddTaskModal
+          onClose={handleCloseModal}
+          onAddTask={handleAddTask}
+        />
+      )}
     </div>
   );
 }

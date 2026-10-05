@@ -1,9 +1,10 @@
+
 import {
   Plus,
   Sparkles,
 } from "lucide-react";
 
-function Hero() {
+function Hero({ onAddTask }) {
   return (
     <section className="hero">
       <div>
@@ -19,7 +20,11 @@ function Hero() {
         </p>
       </div>
 
-      <button className="add-task-button">
+      <button
+        type="button"
+        className="add-task-button"
+        onClick={onAddTask}
+      >
         <Plus size={18} />
         Add Task
       </button>
@@ -28,3 +33,4 @@ function Hero() {
 }
 
 export default Hero;
+
