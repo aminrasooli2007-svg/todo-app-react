@@ -1,17 +1,33 @@
-function ProgressCard() {
+
+function ProgressCard({
+  completedCount,
+  totalCount,
+}) {
+  const progress =
+    totalCount === 0
+      ? 0
+      : Math.round(
+          (completedCount / totalCount) * 100
+        );
+
   return (
     <section className="progress-card">
       <div className="progress-info">
         <div>
           <span>Daily progress</span>
-          <strong>42%</strong>
+          <strong>{progress}%</strong>
         </div>
 
-        <p>5 of 12 tasks completed</p>
+        <p>
+          {completedCount} of {totalCount} tasks completed
+        </p>
       </div>
 
       <div className="progress-bar">
-        <div className="progress-value"></div>
+        <div
+          className="progress-value"
+          style={{ width: `${progress}%` }}
+        ></div>
       </div>
     </section>
   );

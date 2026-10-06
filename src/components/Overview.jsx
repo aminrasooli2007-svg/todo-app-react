@@ -1,3 +1,4 @@
+
 import {
   CalendarDays,
   CheckCircle2,
@@ -5,7 +6,12 @@ import {
   ListTodo,
 } from "lucide-react";
 
-function Overview() {
+function Overview({
+  totalCount,
+  activeCount,
+  completedCount,
+  dueTodayCount,
+}) {
   return (
     <section className="overview">
       <div className="overview-card">
@@ -15,7 +21,7 @@ function Overview() {
 
         <div>
           <span>Total Tasks</span>
-          <strong>12</strong>
+          <strong>{totalCount}</strong>
         </div>
       </div>
 
@@ -26,7 +32,7 @@ function Overview() {
 
         <div>
           <span>In Progress</span>
-          <strong>7</strong>
+          <strong>{activeCount}</strong>
         </div>
       </div>
 
@@ -37,7 +43,7 @@ function Overview() {
 
         <div>
           <span>Completed</span>
-          <strong>5</strong>
+          <strong>{completedCount}</strong>
         </div>
       </div>
 
@@ -48,7 +54,7 @@ function Overview() {
 
         <div>
           <span>Due Today</span>
-          <strong>3</strong>
+          <strong>{dueTodayCount}</strong>
         </div>
       </div>
     </section>

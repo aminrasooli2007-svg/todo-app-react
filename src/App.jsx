@@ -15,6 +15,9 @@ function App() {
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [showClearModal, setShowClearModal] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState("All");
   const [notification, setNotification] = useState("");
 
   const [tasks, setTasks] = useState([
@@ -60,8 +63,16 @@ function App() {
     },
   ]);
 
+  const totalCount = tasks.length;
+
   const completedCount = tasks.filter(
     (task) => task.completed
+  ).length;
+
+  const activeCount = totalCount - completedCount;
+
+  const dueTodayCount = tasks.filter(
+    (task) => task.date === "Today"
   ).length;
 
   function handleOpenModal() {
@@ -159,9 +170,17 @@ function App() {
       <main className="main-content">
         <Hero onAddTask={handleOpenModal} />
 
-        <Overview />
+        <Overview
+          totalCount={totalCount}
+          activeCount={activeCount}
+          completedCount={completedCount}
+          dueTodayCount={dueTodayCount}
+        />
 
-        <ProgressCard />
+        <ProgressCard
+          completedCount={completedCount}
+          totalCount={totalCount}
+        />
 
         <TasksSection
           tasks={tasks}
@@ -170,6 +189,12 @@ function App() {
           onToggleTask={handleToggleTask}
           onDeleteTask={handleRequestDelete}
           onClearCompleted={handleRequestClearCompleted}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          priorityFilter={priorityFilter}
+          onPriorityChange={setPriorityFilter}
+          categoryFilter={categoryFilter}
+          onCategoryChange={setCategoryFilter}
         />
       </main>
 

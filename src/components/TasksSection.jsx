@@ -15,6 +15,12 @@ function TasksSection({
   onToggleTask,
   onDeleteTask,
   onClearCompleted,
+  searchTerm,
+  onSearchChange,
+  priorityFilter,
+  onPriorityChange,
+  categoryFilter,
+  onCategoryChange,
 }) {
   const completedCount = tasks.filter(
     (task) => task.completed
@@ -23,15 +29,29 @@ function TasksSection({
   const activeCount = tasks.length - completedCount;
 
   const filteredTasks = tasks.filter((task) => {
-    if (activeTab === "active") {
-      return !task.completed;
-    }
+    const matchesTab =
+      activeTab === "all" ||
+      (activeTab === "active" && !task.completed) ||
+      (activeTab === "completed" && task.completed);
 
-    if (activeTab === "completed") {
-      return task.completed;
-    }
+    const matchesSearch = task.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
-    return true;
+    const matchesPriority =
+      priorityFilter === "All" ||
+      task.priority === priorityFilter;
+
+    const matchesCategory =
+      categoryFilter === "All" ||
+      task.category === categoryFilter;
+
+    return (
+      matchesTab &&
+      matchesSearch &&
+      matchesPriority &&
+      matchesCategory
+    );
   });
 
   return (
@@ -47,7 +67,14 @@ function TasksSection({
         </button>
       </div>
 
-      <TaskToolbar />
+      <TaskToolbar
+        searchTerm={searchTerm}
+        onSearchChange={onSearchChange}
+        priorityFilter={priorityFilter}
+        onPriorityChange={onPriorityChange}
+        categoryFilter={categoryFilter}
+        onCategoryChange={onCategoryChange}
+      />
 
       <TaskTabs
         activeTab={activeTab}
