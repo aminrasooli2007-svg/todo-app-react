@@ -8,7 +8,11 @@ import {
   Trash2,
 } from "lucide-react";
 
-function TaskCard({ task, onToggleTask }) {
+function TaskCard({
+  task,
+  onToggleTask,
+  onDeleteTask,
+}) {
   return (
     <div
       className={`task-card ${
@@ -64,6 +68,7 @@ function TaskCard({ task, onToggleTask }) {
         <button
           type="button"
           className="task-action delete"
+          onClick={() => onDeleteTask(task.id)}
         >
           <Trash2 size={16} />
         </button>

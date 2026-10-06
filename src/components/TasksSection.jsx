@@ -8,7 +8,11 @@ import TaskTabs from "./TaskTabs";
 import TaskList from "./TaskList";
 import TaskFooter from "./TaskFooter";
 
-function TasksSection({ tasks, onToggleTask }) {
+function TasksSection({
+  tasks,
+  onToggleTask,
+  onDeleteTask,
+}) {
   return (
     <section className="tasks-section">
       <div className="section-header">
@@ -29,6 +33,7 @@ function TasksSection({ tasks, onToggleTask }) {
       <TaskList
         tasks={tasks}
         onToggleTask={onToggleTask}
+        onDeleteTask={onDeleteTask}
       />
 
       <TaskFooter />

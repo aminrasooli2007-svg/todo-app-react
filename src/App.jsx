@@ -6,9 +6,13 @@ import Overview from "./components/Overview";
 import ProgressCard from "./components/ProgressCard";
 import TasksSection from "./components/TasksSection";
 import AddTaskModal from "./components/AddTaskModal";
+import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import Toast from "./components/Toast";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+  const [notification, setNotification] = useState("");
 
   const [tasks, setTasks] = useState([
     {
@@ -83,6 +87,37 @@ function App() {
     );
   }
 
+  function handleRequestDelete(taskId) {
+    const selectedTask = tasks.find(
+      (task) => task.id === taskId
+    );
+
+    setTaskToDelete(selectedTask);
+  }
+
+  function handleCancelDelete() {
+    setTaskToDelete(null);
+  }
+
+  function handleConfirmDelete() {
+    if (!taskToDelete) {
+      return;
+    }
+
+    setTasks((currentTasks) =>
+      currentTasks.filter(
+        (task) => task.id !== taskToDelete.id
+      )
+    );
+
+    setTaskToDelete(null);
+    setNotification("Task deleted successfully");
+
+    setTimeout(() => {
+      setNotification("");
+    }, 3000);
+  }
+
   return (
     <div className="app">
       <Header />
@@ -97,6 +132,7 @@ function App() {
         <TasksSection
           tasks={tasks}
           onToggleTask={handleToggleTask}
+          onDeleteTask={handleRequestDelete}
         />
       </main>
 
@@ -105,6 +141,18 @@ function App() {
           onClose={handleCloseModal}
           onAddTask={handleAddTask}
         />
+      )}
+
+      {taskToDelete && (
+        <DeleteConfirmModal
+          task={taskToDelete}
+          onCancel={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
+
+      {notification && (
+        <Toast message={notification} />
       )}
     </div>
   );
