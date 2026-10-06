@@ -1,4 +1,3 @@
-
 import {
   Plus,
   Sparkles,
@@ -13,7 +12,7 @@ function Hero({ onAddTask }) {
           <span>Stay focused</span>
         </div>
 
-        <h1>Good morning, Amin 👋</h1>
+        <h1>Welcome 👋</h1>
 
         <p>
           Organize your day and get things done.
@@ -33,4 +32,3 @@ function Hero({ onAddTask }) {
 }
 
 export default Hero;
-

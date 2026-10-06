@@ -12,6 +12,7 @@ function TaskCard({
   task,
   onToggleTask,
   onDeleteTask,
+  onEditTask,
 }) {
   return (
     <div
@@ -61,6 +62,8 @@ function TaskCard({
         <button
           type="button"
           className="task-action"
+          onClick={() => onEditTask(task.id)}
+          aria-label="Edit task"
         >
           <MoreHorizontal size={18} />
         </button>
@@ -69,6 +72,7 @@ function TaskCard({
           type="button"
           className="task-action delete"
           onClick={() => onDeleteTask(task.id)}
+          aria-label="Delete task"
         >
           <Trash2 size={16} />
         </button>

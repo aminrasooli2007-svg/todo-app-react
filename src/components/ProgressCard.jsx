@@ -1,4 +1,3 @@
-
 function ProgressCard({
   completedCount,
   totalCount,

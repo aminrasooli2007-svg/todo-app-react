@@ -1,18 +1,63 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Overview from "./components/Overview";
 import ProgressCard from "./components/ProgressCard";
 import TasksSection from "./components/TasksSection";
 import AddTaskModal from "./components/AddTaskModal";
+import EditTaskModal from "./components/EditTaskModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import ClearCompletedModal from "./components/ClearCompletedModal";
 import Toast from "./components/Toast";
 
+const initialTasks = [
+  {
+    id: 1,
+    title: "Finish React Todo App",
+    category: "Development",
+    priority: "High",
+    date: "Today",
+    completed: false,
+  },
+  {
+    id: 2,
+    title: "Study JavaScript scenarios",
+    category: "Study",
+    priority: "Medium",
+    date: "Today",
+    completed: false,
+  },
+  {
+    id: 3,
+    title: "Upload project to GitHub",
+    category: "Development",
+    priority: "Low",
+    date: "Tomorrow",
+    completed: true,
+  },
+  {
+    id: 4,
+    title: "Practice English speaking",
+    category: "Personal",
+    priority: "Medium",
+    date: "Tomorrow",
+    completed: false,
+  },
+  {
+    id: 5,
+    title: "Review database notes",
+    category: "Study",
+    priority: "Low",
+    date: "Oct 8",
+    completed: true,
+  },
+];
+
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const [taskToEdit, setTaskToEdit] = useState(null);
   const [showClearModal, setShowClearModal] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,48 +65,53 @@ function App() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [notification, setNotification] = useState("");
 
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Finish React Todo App",
-      category: "Development",
-      priority: "High",
-      date: "Today",
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Study JavaScript scenarios",
-      category: "Study",
-      priority: "Medium",
-      date: "Today",
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "Upload project to GitHub",
-      category: "Development",
-      priority: "Low",
-      date: "Tomorrow",
-      completed: true,
-    },
-    {
-      id: 4,
-      title: "Practice English speaking",
-      category: "Personal",
-      priority: "Medium",
-      date: "Tomorrow",
-      completed: false,
-    },
-    {
-      id: 5,
-      title: "Review database notes",
-      category: "Study",
-      priority: "Low",
-      date: "Oct 8",
-      completed: true,
-    },
-  ]);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("todoflow-theme") || "dark";
+  });
+
+  const [tasks, setTasks] = useState(() => {
+    const savedTasks = localStorage.getItem("todoflow-tasks");
+
+    if (savedTasks) {
+      return JSON.parse(savedTasks);
+    }
+
+    return initialTasks;
+  });
+
+  const [notifications, setNotifications] = useState(() => {
+    const savedNotifications =
+      localStorage.getItem("todoflow-notifications");
+
+    if (savedNotifications) {
+      return JSON.parse(savedNotifications);
+    }
+
+    return [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "todoflow-tasks",
+      JSON.stringify(tasks)
+    );
+  }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "todoflow-theme",
+      theme
+    );
+
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "todoflow-notifications",
+      JSON.stringify(notifications)
+    );
+  }, [notifications]);
 
   const totalCount = tasks.length;
 
@@ -75,12 +125,26 @@ function App() {
     (task) => task.date === "Today"
   ).length;
 
-  function handleOpenModal() {
-    setShowModal(true);
+  function showNotification(message) {
+    setNotification(message);
+
+    setTimeout(() => {
+      setNotification("");
+    }, 3000);
   }
 
-  function handleCloseModal() {
-    setShowModal(false);
+  function addActivity(title, message) {
+    const newNotification = {
+      id: Date.now(),
+      title,
+      message,
+      read: false,
+    };
+
+    setNotifications((currentNotifications) => [
+      newNotification,
+      ...currentNotifications,
+    ].slice(0, 8));
   }
 
   function handleAddTask(newTask) {
@@ -90,18 +154,71 @@ function App() {
     ]);
 
     setShowModal(false);
+
+    showNotification("Task added successfully");
+
+    addActivity(
+      "New task added",
+      `"${newTask.title}" was added.`
+    );
   }
 
   function handleToggleTask(taskId) {
+    const selectedTask = tasks.find(
+      (task) => task.id === taskId
+    );
+
+    if (!selectedTask) {
+      return;
+    }
+
+    const completed = !selectedTask.completed;
+
     setTasks((currentTasks) =>
       currentTasks.map((task) =>
         task.id === taskId
           ? {
               ...task,
-              completed: !task.completed,
+              completed,
             }
           : task
       )
+    );
+
+    addActivity(
+      completed
+        ? "Task completed"
+        : "Task reopened",
+      `"${selectedTask.title}" ${
+        completed ? "was completed." : "was reopened."
+      }`
+    );
+  }
+
+  function handleRequestEdit(taskId) {
+    const selectedTask = tasks.find(
+      (task) => task.id === taskId
+    );
+
+    setTaskToEdit(selectedTask);
+  }
+
+  function handleSaveTask(updatedTask) {
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === updatedTask.id
+          ? updatedTask
+          : task
+      )
+    );
+
+    setTaskToEdit(null);
+
+    showNotification("Task updated successfully");
+
+    addActivity(
+      "Task updated",
+      `"${updatedTask.title}" was updated.`
     );
   }
 
@@ -111,10 +228,6 @@ function App() {
     );
 
     setTaskToDelete(selectedTask);
-  }
-
-  function handleCancelDelete() {
-    setTaskToDelete(null);
   }
 
   function handleConfirmDelete() {
@@ -128,12 +241,14 @@ function App() {
       )
     );
 
-    setTaskToDelete(null);
-    setNotification("Task deleted successfully");
+    addActivity(
+      "Task deleted",
+      `"${taskToDelete.title}" was deleted.`
+    );
 
-    setTimeout(() => {
-      setNotification("");
-    }, 3000);
+    setTaskToDelete(null);
+
+    showNotification("Task deleted successfully");
   }
 
   function handleRequestClearCompleted() {
@@ -144,31 +259,54 @@ function App() {
     setShowClearModal(true);
   }
 
-  function handleCancelClearCompleted() {
-    setShowClearModal(false);
-  }
-
   function handleConfirmClearCompleted() {
     setTasks((currentTasks) =>
       currentTasks.filter((task) => !task.completed)
     );
 
     setShowClearModal(false);
-    setNotification(
-      "Completed tasks cleared successfully"
+
+    addActivity(
+      "Completed tasks cleared",
+      `${completedCount} completed tasks were removed.`
     );
 
-    setTimeout(() => {
-      setNotification("");
-    }, 3000);
+    showNotification(
+      "Completed tasks cleared successfully"
+    );
+  }
+
+  function handleMarkNotificationsRead() {
+    setNotifications((currentNotifications) =>
+      currentNotifications.map(
+        (notification) => ({
+          ...notification,
+          read: true,
+        })
+      )
+    );
+  }
+
+  function handleDeleteAllNotifications() {
+    setNotifications([]);
   }
 
   return (
     <div className="app">
-      <Header />
+      <Header
+        notifications={notifications}
+        onMarkNotificationsRead={
+          handleMarkNotificationsRead
+        }
+        onDeleteAllNotifications={
+          handleDeleteAllNotifications
+        }
+      />
 
       <main className="main-content">
-        <Hero onAddTask={handleOpenModal} />
+        <Hero
+          onAddTask={() => setShowModal(true)}
+        />
 
         <Overview
           totalCount={totalCount}
@@ -188,27 +326,40 @@ function App() {
           onChangeTab={setActiveTab}
           onToggleTask={handleToggleTask}
           onDeleteTask={handleRequestDelete}
-          onClearCompleted={handleRequestClearCompleted}
+          onEditTask={handleRequestEdit}
+          onClearCompleted={
+            handleRequestClearCompleted
+          }
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           priorityFilter={priorityFilter}
           onPriorityChange={setPriorityFilter}
           categoryFilter={categoryFilter}
           onCategoryChange={setCategoryFilter}
+          theme={theme}
+          onThemeChange={setTheme}
         />
       </main>
 
       {showModal && (
         <AddTaskModal
-          onClose={handleCloseModal}
+          onClose={() => setShowModal(false)}
           onAddTask={handleAddTask}
+        />
+      )}
+
+      {taskToEdit && (
+        <EditTaskModal
+          task={taskToEdit}
+          onClose={() => setTaskToEdit(null)}
+          onSave={handleSaveTask}
         />
       )}
 
       {taskToDelete && (
         <DeleteConfirmModal
           task={taskToDelete}
-          onCancel={handleCancelDelete}
+          onCancel={() => setTaskToDelete(null)}
           onConfirm={handleConfirmDelete}
         />
       )}
@@ -216,13 +367,16 @@ function App() {
       {showClearModal && (
         <ClearCompletedModal
           completedCount={completedCount}
-          onCancel={handleCancelClearCompleted}
+          onCancel={() => setShowClearModal(false)}
           onConfirm={handleConfirmClearCompleted}
         />
       )}
 
       {notification && (
-        <Toast message={notification} />
+        <Toast
+          message={notification}
+          onClose={() => setNotification("")}
+        />
       )}
     </div>
   );

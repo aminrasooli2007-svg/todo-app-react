@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   CalendarDays,
@@ -5,11 +6,21 @@ import {
   X,
 } from "lucide-react";
 
-function AddTaskModal({ onClose, onAddTask }) {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Development");
-  const [priority, setPriority] = useState("Low");
-  const [date, setDate] = useState("");
+function EditTaskModal({
+  task,
+  onClose,
+  onSave,
+}) {
+  const [title, setTitle] = useState(task.title);
+  const [category, setCategory] = useState(task.category);
+  const [priority, setPriority] = useState(task.priority);
+  const [date, setDate] = useState(
+    task.date === "Today" ||
+    task.date === "Tomorrow" ||
+    task.date === "No date"
+      ? ""
+      : task.date
+  );
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -18,16 +29,13 @@ function AddTaskModal({ onClose, onAddTask }) {
       return;
     }
 
-    const newTask = {
-      id: Date.now(),
+    onSave({
+      ...task,
       title: title.trim(),
       category,
       priority,
       date: date || "No date",
-      completed: false,
-    };
-
-    onAddTask(newTask);
+    });
   }
 
   return (
@@ -35,8 +43,8 @@ function AddTaskModal({ onClose, onAddTask }) {
       <div className="task-modal">
         <div className="modal-header">
           <div>
-            <h2>Add New Task</h2>
-            <p>Create a new task and stay organized.</p>
+            <h2>Edit Task</h2>
+            <p>Update your task details.</p>
           </div>
 
           <button
@@ -138,7 +146,7 @@ function AddTaskModal({ onClose, onAddTask }) {
               type="submit"
               className="submit-task-button"
             >
-              Add Task
+              Save Changes
             </button>
           </div>
         </form>
@@ -147,4 +155,4 @@ function AddTaskModal({ onClose, onAddTask }) {
   );
 }
 
-export default AddTaskModal;
+export default EditTaskModal;

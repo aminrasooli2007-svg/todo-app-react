@@ -1,6 +1,10 @@
 
+import { useState } from "react";
 import {
   Settings,
+  Moon,
+  Sun,
+  Check,
 } from "lucide-react";
 
 import TaskToolbar from "./TaskToolbar";
@@ -14,6 +18,7 @@ function TasksSection({
   onChangeTab,
   onToggleTask,
   onDeleteTask,
+  onEditTask,
   onClearCompleted,
   searchTerm,
   onSearchChange,
@@ -21,7 +26,11 @@ function TasksSection({
   onPriorityChange,
   categoryFilter,
   onCategoryChange,
+  theme,
+  onThemeChange,
 }) {
+  const [showSettings, setShowSettings] = useState(false);
+
   const completedCount = tasks.filter(
     (task) => task.completed
   ).length;
@@ -62,9 +71,68 @@ function TasksSection({
           <p>Manage your tasks and stay productive.</p>
         </div>
 
-        <button className="settings-button">
-          <Settings size={17} />
-        </button>
+        <div className="settings-wrapper">
+          <button
+            type="button"
+            className={`settings-button ${
+              showSettings ? "active" : ""
+            }`}
+            onClick={() =>
+              setShowSettings(!showSettings)
+            }
+            aria-label="Settings"
+          >
+            <Settings size={17} />
+          </button>
+
+          {showSettings && (
+            <div className="settings-menu">
+              <div className="settings-title">
+                Appearance
+              </div>
+
+              <button
+                type="button"
+                className={
+                  theme === "dark"
+                    ? "theme-option active"
+                    : "theme-option"
+                }
+                onClick={() => {
+                  onThemeChange("dark");
+                  setShowSettings(false);
+                }}
+              >
+                <Moon size={16} />
+                <span>Dark Mode</span>
+
+                {theme === "dark" && (
+                  <Check size={15} />
+                )}
+              </button>
+
+              <button
+                type="button"
+                className={
+                  theme === "light"
+                    ? "theme-option active"
+                    : "theme-option"
+                }
+                onClick={() => {
+                  onThemeChange("light");
+                  setShowSettings(false);
+                }}
+              >
+                <Sun size={16} />
+                <span>Light Mode</span>
+
+                {theme === "light" && (
+                  <Check size={15} />
+                )}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <TaskToolbar
@@ -88,6 +156,7 @@ function TasksSection({
         tasks={filteredTasks}
         onToggleTask={onToggleTask}
         onDeleteTask={onDeleteTask}
+        onEditTask={onEditTask}
       />
 
       <TaskFooter

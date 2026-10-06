@@ -1,10 +1,12 @@
-
 import {
   CheckCircle2,
   X,
 } from "lucide-react";
 
-function Toast({ message }) {
+function Toast({
+  message,
+  onClose,
+}) {
   return (
     <div className="toast">
       <div className="toast-icon">
@@ -19,6 +21,7 @@ function Toast({ message }) {
       <button
         type="button"
         className="toast-close"
+        onClick={onClose}
       >
         <X size={15} />
       </button>
