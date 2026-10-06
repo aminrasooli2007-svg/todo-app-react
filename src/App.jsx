@@ -70,6 +70,19 @@ function App() {
     setShowModal(false);
   }
 
+  function handleToggleTask(taskId) {
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              completed: !task.completed,
+            }
+          : task
+      )
+    );
+  }
+
   return (
     <div className="app">
       <Header />
@@ -81,7 +94,10 @@ function App() {
 
         <ProgressCard />
 
-        <TasksSection tasks={tasks} />
+        <TasksSection
+          tasks={tasks}
+          onToggleTask={handleToggleTask}
+        />
       </main>
 
       {showModal && (
@@ -95,4 +111,3 @@ function App() {
 }
 
 export default App;
-

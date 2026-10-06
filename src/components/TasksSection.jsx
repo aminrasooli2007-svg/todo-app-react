@@ -1,3 +1,4 @@
+
 import {
   Settings,
 } from "lucide-react";
@@ -7,7 +8,7 @@ import TaskTabs from "./TaskTabs";
 import TaskList from "./TaskList";
 import TaskFooter from "./TaskFooter";
 
-function TasksSection({ tasks }) {
+function TasksSection({ tasks, onToggleTask }) {
   return (
     <section className="tasks-section">
       <div className="section-header">
@@ -25,7 +26,10 @@ function TasksSection({ tasks }) {
 
       <TaskTabs />
 
-      <TaskList tasks={tasks} />
+      <TaskList
+        tasks={tasks}
+        onToggleTask={onToggleTask}
+      />
 
       <TaskFooter />
     </section>

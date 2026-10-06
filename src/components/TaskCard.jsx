@@ -1,3 +1,4 @@
+
 import {
   CalendarDays,
   Check,
@@ -7,14 +8,18 @@ import {
   Trash2,
 } from "lucide-react";
 
-function TaskCard({ task }) {
+function TaskCard({ task, onToggleTask }) {
   return (
     <div
       className={`task-card ${
         task.completed ? "completed" : ""
       }`}
     >
-      <button className="task-check">
+      <button
+        type="button"
+        className="task-check"
+        onClick={() => onToggleTask(task.id)}
+      >
         {task.completed ? (
           <span className="checked">
             <Check size={14} />
@@ -49,11 +54,17 @@ function TaskCard({ task }) {
       </div>
 
       <div className="task-actions">
-        <button className="task-action">
+        <button
+          type="button"
+          className="task-action"
+        >
           <MoreHorizontal size={18} />
         </button>
 
-        <button className="task-action delete">
+        <button
+          type="button"
+          className="task-action delete"
+        >
           <Trash2 size={16} />
         </button>
       </div>
