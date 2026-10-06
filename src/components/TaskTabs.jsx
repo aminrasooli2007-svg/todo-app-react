@@ -1,16 +1,41 @@
-function TaskTabs() {
+
+function TaskTabs({
+  activeTab,
+  onChangeTab,
+  totalCount,
+  activeCount,
+  completedCount,
+}) {
   return (
     <div className="task-tabs">
-      <button className="task-tab active">
-        All <span>12</span>
+      <button
+        type="button"
+        className={`task-tab ${
+          activeTab === "all" ? "active" : ""
+        }`}
+        onClick={() => onChangeTab("all")}
+      >
+        All <span>{totalCount}</span>
       </button>
 
-      <button className="task-tab">
-        Active <span>7</span>
+      <button
+        type="button"
+        className={`task-tab ${
+          activeTab === "active" ? "active" : ""
+        }`}
+        onClick={() => onChangeTab("active")}
+      >
+        Active <span>{activeCount}</span>
       </button>
 
-      <button className="task-tab">
-        Completed <span>5</span>
+      <button
+        type="button"
+        className={`task-tab ${
+          activeTab === "completed" ? "active" : ""
+        }`}
+        onClick={() => onChangeTab("completed")}
+      >
+        Completed <span>{completedCount}</span>
       </button>
     </div>
   );

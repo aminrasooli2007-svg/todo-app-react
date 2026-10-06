@@ -10,9 +10,30 @@ import TaskFooter from "./TaskFooter";
 
 function TasksSection({
   tasks,
+  activeTab,
+  onChangeTab,
   onToggleTask,
   onDeleteTask,
+  onClearCompleted,
 }) {
+  const completedCount = tasks.filter(
+    (task) => task.completed
+  ).length;
+
+  const activeCount = tasks.length - completedCount;
+
+  const filteredTasks = tasks.filter((task) => {
+    if (activeTab === "active") {
+      return !task.completed;
+    }
+
+    if (activeTab === "completed") {
+      return task.completed;
+    }
+
+    return true;
+  });
+
   return (
     <section className="tasks-section">
       <div className="section-header">
@@ -28,15 +49,25 @@ function TasksSection({
 
       <TaskToolbar />
 
-      <TaskTabs />
+      <TaskTabs
+        activeTab={activeTab}
+        onChangeTab={onChangeTab}
+        totalCount={tasks.length}
+        activeCount={activeCount}
+        completedCount={completedCount}
+      />
 
       <TaskList
-        tasks={tasks}
+        tasks={filteredTasks}
         onToggleTask={onToggleTask}
         onDeleteTask={onDeleteTask}
       />
 
-      <TaskFooter />
+      <TaskFooter
+        taskCount={filteredTasks.length}
+        completedCount={completedCount}
+        onClearCompleted={onClearCompleted}
+      />
     </section>
   );
 }

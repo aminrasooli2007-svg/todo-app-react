@@ -7,11 +7,14 @@ import ProgressCard from "./components/ProgressCard";
 import TasksSection from "./components/TasksSection";
 import AddTaskModal from "./components/AddTaskModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import ClearCompletedModal from "./components/ClearCompletedModal";
 import Toast from "./components/Toast";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const [showClearModal, setShowClearModal] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
   const [notification, setNotification] = useState("");
 
   const [tasks, setTasks] = useState([
@@ -56,6 +59,10 @@ function App() {
       completed: true,
     },
   ]);
+
+  const completedCount = tasks.filter(
+    (task) => task.completed
+  ).length;
 
   function handleOpenModal() {
     setShowModal(true);
@@ -118,6 +125,33 @@ function App() {
     }, 3000);
   }
 
+  function handleRequestClearCompleted() {
+    if (completedCount === 0) {
+      return;
+    }
+
+    setShowClearModal(true);
+  }
+
+  function handleCancelClearCompleted() {
+    setShowClearModal(false);
+  }
+
+  function handleConfirmClearCompleted() {
+    setTasks((currentTasks) =>
+      currentTasks.filter((task) => !task.completed)
+    );
+
+    setShowClearModal(false);
+    setNotification(
+      "Completed tasks cleared successfully"
+    );
+
+    setTimeout(() => {
+      setNotification("");
+    }, 3000);
+  }
+
   return (
     <div className="app">
       <Header />
@@ -131,8 +165,11 @@ function App() {
 
         <TasksSection
           tasks={tasks}
+          activeTab={activeTab}
+          onChangeTab={setActiveTab}
           onToggleTask={handleToggleTask}
           onDeleteTask={handleRequestDelete}
+          onClearCompleted={handleRequestClearCompleted}
         />
       </main>
 
@@ -148,6 +185,14 @@ function App() {
           task={taskToDelete}
           onCancel={handleCancelDelete}
           onConfirm={handleConfirmDelete}
+        />
+      )}
+
+      {showClearModal && (
+        <ClearCompletedModal
+          completedCount={completedCount}
+          onCancel={handleCancelClearCompleted}
+          onConfirm={handleConfirmClearCompleted}
         />
       )}
 
