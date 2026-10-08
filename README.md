@@ -1,5 +1,5 @@
 # TodoFlow
-
+![Project Screenshot](Todo.png)
 A modern and responsive Todo application built with React, designed to help users organize tasks, track progress, and stay productive.
 
 ## 🚀 Demo
